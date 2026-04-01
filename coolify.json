@@ -1,0 +1,5 @@
+{
+  "name": "ptero-credit-system",
+  "dockerfile": "Dockerfile",
+  "port": 3000
+}
