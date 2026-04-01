@@ -1,10 +1,11 @@
-const { Pool } = require("pg")
-require("dotenv").config()
+const mongoose = require("mongoose")
 
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
-})
+async function connectDB() {
+    await mongoose.connect(
+        process.env.MONGO_URI
+    )
 
-module.exports = {
-    query: (text, params) => pool.query(text, params)
+    console.log("MongoDB Connected")
 }
+
+module.exports = connectDB
