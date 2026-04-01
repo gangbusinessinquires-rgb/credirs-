@@ -1,23 +1,75 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="style.css">
+
+<title>DCI Dashboard</title>
+
+<link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
-<h1>Dashboard</h1>
+<div class="sidebar">
 
-<div id="info"></div>
+<h2>DCI Credits</h2>
+
+<a href="#">Dashboard</a>
+<a href="#">Servers</a>
+<a href="#">Credits</a>
+
+</div>
+
+<div class="main">
+
+<div class="navbar">
+
+<span id="username">Loading...</span>
+
+</div>
+
+<div class="cards">
+
+<div class="card">
+
+<h3>Credits</h3>
+<p id="credits">0</p>
 
 <button onclick="watchAd()">
-Watch Ad (Get Credits)
+Watch Ad
 </button>
+
+</div>
+
+<div class="card">
+
+<h3>Servers</h3>
+<p id="servers">0</p>
 
 <button onclick="createServer()">
 Create Server
 </button>
+
+</div>
+
+<div class="card">
+
+<h3>Last Login</h3>
+<p id="lastlogin">-</p>
+
+</div>
+
+</div>
+
+<div class="server-list">
+
+<h2>Your Servers</h2>
+
+<div id="serverContainer"></div>
+
+</div>
+
+</div>
 
 <script src="app.js"></script>
 
