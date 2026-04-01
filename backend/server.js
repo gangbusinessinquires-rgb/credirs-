@@ -4,6 +4,8 @@ const express = require("express")
 const cors = require("cors")
 const path = require("path")
 
+const connectDB = require("./db")
+
 const auth = require("./routes/auth")
 const credits = require("./routes/credits")
 const servers = require("./routes/servers")
@@ -11,11 +13,12 @@ const dashboard = require("./routes/dashboard")
 
 require("./services/scheduler")
 
+connectDB()
+
 const app = express()
 
 app.use(cors())
 app.use(express.json())
-
 app.use(express.static("public"))
 
 app.use("/auth", auth)
@@ -30,5 +33,5 @@ app.get("/", (req, res) => {
 })
 
 app.listen(process.env.PORT, () => {
-    console.log("Running on port " + process.env.PORT)
+    console.log("Running on port 3000")
 })
