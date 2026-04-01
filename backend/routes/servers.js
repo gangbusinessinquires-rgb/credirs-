@@ -7,7 +7,7 @@ router.post("/create", async (req, res) => {
     const { discord_id } = req.body
 
     const user = await db.query(
-        "SELECT * FROM users WHERE discord_id = $1",
+        "SELECT * FROM users WHERE discord_id=$1",
         [discord_id]
     )
 
@@ -17,19 +17,23 @@ router.post("/create", async (req, res) => {
     const username = user.rows[0].username
 
     const count = await db.query(
-        "SELECT COUNT(*) FROM servers WHERE discord_id = $1",
+        "SELECT COUNT(*) FROM servers WHERE discord_id=$1",
         [discord_id]
     )
 
-    const serverNumber = parseInt(count.rows[0].count) + 1
+    const number =
+        parseInt(count.rows[0].count) + 1
 
-    const password = `${username}${serverNumber}`
+    const password =
+        `${username}${number}`
 
-    const server = await ptero.createServer(
-        username,
-        password,
-        serverNumber
-    )
+    const server =
+        await ptero.createServer(
+            username,
+            discord_id,
+            password,
+            number
+        )
 
     await db.query(
         `
@@ -37,11 +41,7 @@ router.post("/create", async (req, res) => {
         (discord_id, ptero_server_id, password)
         VALUES ($1,$2,$3)
         `,
-        [
-            discord_id,
-            server.id,
-            password
-        ]
+        [discord_id, server.id, password]
     )
 
     res.json({
