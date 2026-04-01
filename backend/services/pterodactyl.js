@@ -9,34 +9,73 @@ const panel = axios.create({
     }
 })
 
-async function createServer(username, password, number) {
+async function getOrCreateUser(username, discord_id) {
 
     if (process.env.TESTING_MODE === "true") {
-        console.log("[TEST] Creating server for", username)
-        return { id: "test-server-" + number }
+        return 1
     }
+
+    const users = await panel.get(
+        `/api/application/users?filter[email]=${discord_id}@dci.local`
+    )
+
+    if (users.data.data.length > 0)
+        return users.data.data[0].attributes.id
+
+    const res = await panel.post(
+        "/api/application/users",
+        {
+            username: username,
+            email: `${discord_id}@dci.local`,
+            first_name: username,
+            last_name: "User",
+            password: "TempPass123!"
+        }
+    )
+
+    return res.data.attributes.id
+}
+
+async function createServer(username, discord_id, password, number) {
+
+    if (process.env.TESTING_MODE === "true") {
+        console.log("[TEST] create server", username)
+        return { id: "test-" + number }
+    }
+
+    const userId = await getOrCreateUser(
+        username,
+        discord_id
+    )
 
     const res = await panel.post(
         "/api/application/servers",
         {
-            name: username + "-" + number,
-            user: 1,
-            egg: process.env.DEFAULT_EGG,
-            docker_image: "ghcr.io/pterodactyl/yolks:nodejs_18",
-            startup: "npm start",
+            name: `${username}-${number}`,
+            user: userId,
+            egg: parseInt(process.env.DEFAULT_EGG),
+            nest: parseInt(process.env.DEFAULT_NEST),
+            docker_image: process.env.DEFAULT_IMAGE,
+            startup: process.env.DEFAULT_STARTUP,
+
             environment: {},
+
             limits: {
-                memory: process.env.DEFAULT_MEMORY,
-                disk: process.env.DEFAULT_DISK,
-                cpu: process.env.DEFAULT_CPU
+                memory: parseInt(process.env.DEFAULT_MEMORY),
+                disk: parseInt(process.env.DEFAULT_DISK),
+                cpu: parseInt(process.env.DEFAULT_CPU)
             },
+
             feature_limits: {
                 databases: 0,
                 backups: 1,
                 allocations: 1
             },
+
             allocation: {
-                default: 1
+                default: parseInt(
+                    process.env.DEFAULT_ALLOCATION
+                )
             }
         }
     )
@@ -47,7 +86,7 @@ async function createServer(username, password, number) {
 async function suspendServer(id) {
 
     if (process.env.TESTING_MODE === "true") {
-        console.log("[TEST] Suspend", id)
+        console.log("[TEST] suspend", id)
         return
     }
 
